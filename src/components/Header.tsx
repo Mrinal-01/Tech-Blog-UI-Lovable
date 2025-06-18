@@ -1,5 +1,5 @@
 
-import { Search, Login } from "lucide-react";
+import { Search, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const Header = () => {
@@ -28,7 +28,7 @@ const Header = () => {
             />
           </div>
           <Button variant="ghost" className="text-gray-600">
-            <Login className="w-4 h-4 mr-2" />
+            <LogIn className="w-4 h-4 mr-2" />
             Login
           </Button>
           <Button className="bg-blue-600 hover:bg-blue-700 text-white">
