@@ -4,7 +4,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { Mail, Lock, User, Chrome } from "lucide-react";
+import { Mail, Lock, User, Phone, Chrome, ArrowLeft } from "lucide-react";
+import OTPVerification from "./OTPVerification";
+import ForgotPassword from "./ForgotPassword";
 
 interface AuthModalProps {
   open: boolean;
@@ -13,20 +15,157 @@ interface AuthModalProps {
 
 const AuthModal = ({ open, onOpenChange }: AuthModalProps) => {
   const [isLogin, setIsLogin] = useState(true);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
+  const [showOTP, setShowOTP] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
+  
+  // Login form state
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+  
+  // Signup form state
+  const [signupData, setSignupData] = useState({
+    username: "",
+    email: "",
+    phone: "",
+    name: "",
+    password: "",
+    rePassword: ""
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log("Form submitted:", { email, password, name });
+    try {
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: loginEmail,
+          password: loginPassword
+        })
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Login successful:", data);
+        onOpenChange(false);
+      } else {
+        console.error("Login failed");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+    }
   };
 
-  const handleGoogleLogin = () => {
-    // Handle Google login here
-    console.log("Google login clicked");
+  const handleSignupSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (signupData.password !== signupData.rePassword) {
+      alert("Passwords don't match!");
+      return;
+    }
+    
+    try {
+      const response = await fetch('/api/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: signupData.username,
+          email: signupData.email,
+          phone: signupData.phone,
+          name: signupData.name,
+          password: signupData.password
+        })
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Signup successful:", data);
+        setUserEmail(signupData.email);
+        setShowOTP(true);
+      } else {
+        console.error("Signup failed");
+      }
+    } catch (error) {
+      console.error("Signup error:", error);
+    }
   };
+
+  const handleGoogleLogin = async () => {
+    try {
+      const response = await fetch('/api/google', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Google login initiated:", data);
+        // Handle Google OAuth redirect
+        window.location.href = data.redirectUrl;
+      }
+    } catch (error) {
+      console.error("Google login error:", error);
+    }
+  };
+
+  const handleForgotPassword = () => {
+    setShowForgotPassword(true);
+  };
+
+  const handleBackToAuth = () => {
+    setShowOTP(false);
+    setShowForgotPassword(false);
+    setSignupData({
+      username: "",
+      email: "",
+      phone: "",
+      name: "",
+      password: "",
+      rePassword: ""
+    });
+    setLoginEmail("");
+    setLoginPassword("");
+  };
+
+  if (showOTP) {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="sm:max-w-md p-0 overflow-hidden">
+          <OTPVerification 
+            email={userEmail} 
+            onVerified={() => {
+              setShowOTP(false);
+              onOpenChange(false);
+            }}
+            onBack={handleBackToAuth}
+          />
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
+  if (showForgotPassword) {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="sm:max-w-md p-0 overflow-hidden">
+          <ForgotPassword 
+            onBack={handleBackToAuth}
+            onSuccess={() => {
+              setShowForgotPassword(false);
+              alert("Password reset link sent to your email!");
+            }}
+          />
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -63,60 +202,131 @@ const AuthModal = ({ open, onOpenChange }: AuthModalProps) => {
               </span>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {!isLogin && (
+            {isLogin ? (
+              <form onSubmit={handleLoginSubmit} className="space-y-4">
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                   <Input
-                    type="text"
-                    placeholder="Full Name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    type="email"
+                    placeholder="Email address"
+                    value={loginEmail}
+                    onChange={(e) => setLoginEmail(e.target.value)}
                     className="pl-10 h-12 border-2 border-gray-200 focus:border-purple-400 rounded-lg"
+                    required
                   />
                 </div>
-              )}
-              
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <Input
-                  type="email"
-                  placeholder="Email address"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10 h-12 border-2 border-gray-200 focus:border-purple-400 rounded-lg"
-                />
-              </div>
-              
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <Input
-                  type="password"
-                  placeholder="Password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10 h-12 border-2 border-gray-200 focus:border-purple-400 rounded-lg"
-                />
-              </div>
+                
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <Input
+                    type="password"
+                    placeholder="Password"
+                    value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
+                    className="pl-10 h-12 border-2 border-gray-200 focus:border-purple-400 rounded-lg"
+                    required
+                  />
+                </div>
 
-              {isLogin && (
                 <div className="text-right">
                   <button
                     type="button"
+                    onClick={handleForgotPassword}
                     className="text-sm text-purple-600 hover:text-purple-700 transition-colors"
                   >
                     Forgot password?
                   </button>
                 </div>
-              )}
 
-              <Button
-                type="submit"
-                className="w-full h-12 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold rounded-lg transition-all duration-200 transform hover:scale-105"
-              >
-                {isLogin ? "Sign In" : "Create Account"}
-              </Button>
-            </form>
+                <Button
+                  type="submit"
+                  className="w-full h-12 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold rounded-lg transition-all duration-200 transform hover:scale-105"
+                >
+                  Sign In
+                </Button>
+              </form>
+            ) : (
+              <form onSubmit={handleSignupSubmit} className="space-y-4">
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <Input
+                    type="text"
+                    placeholder="Full Name"
+                    value={signupData.name}
+                    onChange={(e) => setSignupData({...signupData, name: e.target.value})}
+                    className="pl-10 h-12 border-2 border-gray-200 focus:border-purple-400 rounded-lg"
+                    required
+                  />
+                </div>
+
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <Input
+                    type="text"
+                    placeholder="Username"
+                    value={signupData.username}
+                    onChange={(e) => setSignupData({...signupData, username: e.target.value})}
+                    className="pl-10 h-12 border-2 border-gray-200 focus:border-purple-400 rounded-lg"
+                    required
+                  />
+                </div>
+                
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <Input
+                    type="email"
+                    placeholder="Email address"
+                    value={signupData.email}
+                    onChange={(e) => setSignupData({...signupData, email: e.target.value})}
+                    className="pl-10 h-12 border-2 border-gray-200 focus:border-purple-400 rounded-lg"
+                    required
+                  />
+                </div>
+
+                <div className="relative">
+                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <Input
+                    type="tel"
+                    placeholder="Phone Number"
+                    value={signupData.phone}
+                    onChange={(e) => setSignupData({...signupData, phone: e.target.value})}
+                    className="pl-10 h-12 border-2 border-gray-200 focus:border-purple-400 rounded-lg"
+                    required
+                  />
+                </div>
+                
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <Input
+                    type="password"
+                    placeholder="Password"
+                    value={signupData.password}
+                    onChange={(e) => setSignupData({...signupData, password: e.target.value})}
+                    className="pl-10 h-12 border-2 border-gray-200 focus:border-purple-400 rounded-lg"
+                    required
+                  />
+                </div>
+
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <Input
+                    type="password"
+                    placeholder="Confirm Password"
+                    value={signupData.rePassword}
+                    onChange={(e) => setSignupData({...signupData, rePassword: e.target.value})}
+                    className="pl-10 h-12 border-2 border-gray-200 focus:border-purple-400 rounded-lg"
+                    required
+                  />
+                </div>
+
+                <Button
+                  type="submit"
+                  className="w-full h-12 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold rounded-lg transition-all duration-200 transform hover:scale-105"
+                >
+                  Create Account
+                </Button>
+              </form>
+            )}
 
             <div className="text-center mt-6">
               <p className="text-gray-600">
