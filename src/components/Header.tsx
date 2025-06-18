@@ -1,21 +1,30 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Search, Bell, User, LogOut } from "lucide-react";
+import { Search } from "lucide-react";
 import AuthModal from "./AuthModal";
+import NotificationDropdown from "./NotificationDropdown";
+import UserProfileDropdown from "./UserProfileDropdown";
 
 const Header = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authView, setAuthView] = useState<'login' | 'signup'>('login');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userEmail, setUserEmail] = useState("");
-  const [notificationCount] = useState(3); // Mock notification count
+  const [userName, setUserName] = useState("John Doe"); // Demo name
 
   useEffect(() => {
     const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
     const email = localStorage.getItem('userEmail') || '';
     setIsLoggedIn(loggedIn);
     setUserEmail(email);
+    
+    // Demo: Set name based on email or use default
+    if (email === 'test@example.com') {
+      setUserName('Test User');
+    } else if (email) {
+      setUserName(email.split('@')[0].replace(/[^a-zA-Z]/g, ' '));
+    }
   }, []);
 
   const handleLogin = () => {
@@ -33,6 +42,7 @@ const Header = () => {
     localStorage.removeItem('userEmail');
     setIsLoggedIn(false);
     setUserEmail("");
+    setUserName("");
     window.location.reload();
   };
 
@@ -71,29 +81,19 @@ const Header = () => {
               {isLoggedIn ? (
                 <div className="flex items-center space-x-3">
                   {/* Notifications */}
-                  <div className="relative">
-                    <Button variant="ghost" size="icon" className="relative">
-                      <Bell className="w-5 h-5" />
-                      {notificationCount > 0 && (
-                        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                          {notificationCount > 9 ? '9+' : notificationCount}
-                        </span>
-                      )}
-                    </Button>
-                  </div>
+                  <NotificationDropdown />
 
-                  {/* User Menu */}
+                  {/* User Profile Dropdown */}
                   <div className="flex items-center space-x-2">
                     <div className="hidden sm:flex flex-col items-end">
                       <span className="text-sm font-medium text-gray-700">Welcome back!</span>
-                      <span className="text-xs text-gray-500">{userEmail}</span>
+                      <span className="text-xs text-gray-500">{userName}</span>
                     </div>
-                    <Button variant="ghost" size="icon">
-                      <User className="w-5 h-5" />
-                    </Button>
-                    <Button variant="ghost" size="icon" onClick={handleLogout}>
-                      <LogOut className="w-5 h-5" />
-                    </Button>
+                    <UserProfileDropdown 
+                      userName={userName}
+                      userEmail={userEmail}
+                      onLogout={handleLogout}
+                    />
                   </div>
                 </div>
               ) : (
