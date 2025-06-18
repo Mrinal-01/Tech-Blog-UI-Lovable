@@ -1,83 +1,137 @@
 
-import { Calendar, ChevronRight } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-
-const blogPosts = [
-  {
-    id: 1,
-    title: "Building Scalable React Applications with Redux Toolkit",
-    author: "John Doe",
-    date: "2 days ago",
-    image: "/placeholder.svg?height=200&width=300",
-    category: "React.js",
-    readTime: "5 min read"
-  },
-  {
-    id: 2,
-    title: "Advanced TypeScript/OOP Techniques for Modern Development",
-    author: "Jane Smith", 
-    date: "3 days ago",
-    image: "/placeholder.svg?height=200&width=300",
-    category: "TypeScript",
-    readTime: "8 min read"
-  },
-  {
-    id: 3,
-    title: "Building REST APIs with Node.js and Express Framework",
-    author: "Mike Johnson",
-    date: "5 days ago", 
-    image: "/placeholder.svg?height=200&width=300",
-    category: "Node.js",
-    readTime: "6 min read"
-  },
-  {
-    id: 4,
-    title: "TypeScript Best Practices for Large-Scale Applications",
-    author: "Sarah Wilson",
-    date: "1 week ago",
-    image: "/placeholder.svg?height=200&width=300", 
-    category: "TypeScript",
-    readTime: "7 min read"
-  }
-];
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Heart, MessageCircle, Clock, User } from "lucide-react";
 
 const MostLikedBlogs = () => {
+  const navigate = useNavigate();
+  const [likedPosts, setLikedPosts] = useState<number[]>([]);
+
+  const blogs = [
+    {
+      id: 1,
+      title: "The Future of Artificial Intelligence in Web Development",
+      excerpt: "Exploring how AI is revolutionizing the way we build and design websites, from automated code generation to intelligent user experiences.",
+      author: "Alex Johnson",
+      date: "2024-01-15",
+      readTime: "8 min read",
+      likes: 127,
+      comments: 23,
+      thumbnail: "/placeholder.svg"
+    },
+    {
+      id: 2,
+      title: "Building Scalable React Applications",
+      excerpt: "Best practices and architectural patterns for creating React applications that can grow with your business needs.",
+      author: "Sarah Chen",
+      date: "2024-01-12",
+      readTime: "12 min read",
+      likes: 89,
+      comments: 15,
+      thumbnail: "/placeholder.svg"
+    },
+    {
+      id: 3,
+      title: "The Complete Guide to TypeScript",
+      excerpt: "From basic types to advanced generics, learn everything you need to know about TypeScript development.",
+      author: "Mike Rodriguez",
+      date: "2024-01-10",
+      readTime: "15 min read",
+      likes: 156,
+      comments: 31,
+      thumbnail: "/placeholder.svg"
+    }
+  ];
+
+  const toggleLike = (e: React.MouseEvent, blogId: number) => {
+    e.stopPropagation(); // Prevent navigation when clicking like button
+    setLikedPosts(prev => 
+      prev.includes(blogId) 
+        ? prev.filter(id => id !== blogId)
+        : [...prev, blogId]
+    );
+  };
+
+  const handleBlogClick = (blogId: number) => {
+    navigate(`/blog/${blogId}`);
+  };
+
   return (
-    <section className="py-16 px-6 bg-gray-50">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-12">
-          <h2 className="text-3xl font-bold text-gray-900">Most Liked Blogs</h2>
-          <button className="flex items-center text-blue-600 hover:text-blue-700 font-medium">
-            View All
-            <ChevronRight className="w-4 h-4 ml-1" />
-          </button>
+    <section className="py-16 bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            Most Liked Blogs
+          </h2>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            Discover the most popular articles from our community of developers and tech enthusiasts
+          </p>
         </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {blogPosts.map((post) => (
-            <Card key={post.id} className="group hover:shadow-lg transition-all duration-300 cursor-pointer">
-              <div className="aspect-video bg-gray-900 rounded-t-lg overflow-hidden">
-                <div className="w-full h-full bg-gradient-to-br from-blue-900 to-purple-900 flex items-center justify-center">
-                  <div className="text-center text-white">
-                    <div className="text-4xl mb-2">⚛️</div>
-                    <div className="text-sm font-medium">{post.category}</div>
-                  </div>
-                </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {blogs.map((blog) => (
+            <article 
+              key={blog.id} 
+              className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden border border-gray-200 cursor-pointer transform hover:scale-105"
+              onClick={() => handleBlogClick(blog.id)}
+            >
+              {/* Thumbnail */}
+              <div className="aspect-video bg-gradient-to-r from-purple-100 to-blue-100 flex items-center justify-center">
+                <img
+                  src={blog.thumbnail}
+                  alt={blog.title}
+                  className="w-full h-full object-cover"
+                />
               </div>
-              <CardContent className="p-4">
-                <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
-                  {post.title}
+
+              <div className="p-6">
+                {/* Title */}
+                <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2 hover:text-purple-600 transition-colors">
+                  {blog.title}
                 </h3>
-                <div className="flex items-center space-x-4 text-sm text-gray-500 mb-3">
-                  <span>👤 {post.author}</span>
-                  <span className="flex items-center">
-                    <Calendar className="w-3 h-3 mr-1" />
-                    {post.date}
+
+                {/* Excerpt */}
+                <p className="text-gray-600 mb-4 line-clamp-3">
+                  {blog.excerpt}
+                </p>
+
+                {/* Author and Meta */}
+                <div className="flex items-center text-sm text-gray-500 mb-4">
+                  <User className="w-4 h-4 mr-1" />
+                  <span className="mr-4">{blog.author}</span>
+                  <Clock className="w-4 h-4 mr-1" />
+                  <span>{blog.readTime}</span>
+                </div>
+
+                {/* Engagement */}
+                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                  <div className="flex items-center space-x-4">
+                    <button
+                      onClick={(e) => toggleLike(e, blog.id)}
+                      className={`flex items-center space-x-1 transition-colors ${
+                        likedPosts.includes(blog.id)
+                          ? 'text-red-500'
+                          : 'text-gray-500 hover:text-red-500'
+                      }`}
+                    >
+                      <Heart 
+                        className={`w-4 h-4 ${
+                          likedPosts.includes(blog.id) ? 'fill-current' : ''
+                        }`} 
+                      />
+                      <span className="text-sm">{blog.likes}</span>
+                    </button>
+                    <div className="flex items-center space-x-1 text-gray-500">
+                      <MessageCircle className="w-4 h-4" />
+                      <span className="text-sm">{blog.comments}</span>
+                    </div>
+                  </div>
+                  <span className="text-xs text-gray-400">
+                    {new Date(blog.date).toLocaleDateString()}
                   </span>
                 </div>
-                <div className="text-xs text-gray-400">{post.readTime}</div>
-              </CardContent>
-            </Card>
+              </div>
+            </article>
           ))}
         </div>
       </div>

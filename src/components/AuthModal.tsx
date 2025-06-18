@@ -11,12 +11,11 @@ import ForgotPassword from "./ForgotPassword";
 interface AuthModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  initialView?: 'login' | 'signup';
 }
 
-const AuthModal = ({ open, onOpenChange }: AuthModalProps) => {
-  const [isLogin, setIsLogin] = useState(true);
-  const [showOTP, setShowOTP] = useState(false);
-  const [showForgotPassword, setShowForgotPassword] = useState(false);
+const AuthModal = ({ open, onOpenChange, initialView = 'login' }: AuthModalProps) => {
+  const [currentView, setCurrentView] = useState<'login' | 'signup' | 'otp' | 'forgot'>(initialView);
   const [userEmail, setUserEmail] = useState("");
   
   // Login form state
@@ -33,8 +32,43 @@ const AuthModal = ({ open, onOpenChange }: AuthModalProps) => {
     rePassword: ""
   });
 
+  // Reset state when modal opens/closes or view changes
+  const resetStates = () => {
+    setLoginEmail("");
+    setLoginPassword("");
+    setSignupData({
+      username: "",
+      email: "",
+      phone: "",
+      name: "",
+      password: "",
+      rePassword: ""
+    });
+    setUserEmail("");
+  };
+
+  // Handle modal open/close
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      resetStates();
+      setCurrentView(initialView);
+    }
+    onOpenChange(open);
+  };
+
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Test login functionality
+    if (loginEmail === "test@example.com" && loginPassword === "password") {
+      console.log("Test login successful");
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('userEmail', loginEmail);
+      onOpenChange(false);
+      window.location.reload(); // Refresh to update header
+      return;
+    }
+    
     try {
       const response = await fetch('/api/login', {
         method: 'POST',
@@ -50,12 +84,16 @@ const AuthModal = ({ open, onOpenChange }: AuthModalProps) => {
       if (response.ok) {
         const data = await response.json();
         console.log("Login successful:", data);
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('userEmail', loginEmail);
         onOpenChange(false);
       } else {
         console.error("Login failed");
+        alert("Invalid credentials. Try test@example.com / password for demo.");
       }
     } catch (error) {
       console.error("Login error:", error);
+      alert("Login error. Try test@example.com / password for demo.");
     }
   };
 
@@ -86,7 +124,7 @@ const AuthModal = ({ open, onOpenChange }: AuthModalProps) => {
         const data = await response.json();
         console.log("Signup successful:", data);
         setUserEmail(signupData.email);
-        setShowOTP(true);
+        setCurrentView('otp');
       } else {
         console.error("Signup failed");
       }
@@ -107,7 +145,6 @@ const AuthModal = ({ open, onOpenChange }: AuthModalProps) => {
       if (response.ok) {
         const data = await response.json();
         console.log("Google login initiated:", data);
-        // Handle Google OAuth redirect
         window.location.href = data.redirectUrl;
       }
     } catch (error) {
@@ -115,33 +152,26 @@ const AuthModal = ({ open, onOpenChange }: AuthModalProps) => {
     }
   };
 
-  const handleForgotPassword = () => {
-    setShowForgotPassword(true);
-  };
-
   const handleBackToAuth = () => {
-    setShowOTP(false);
-    setShowForgotPassword(false);
-    setSignupData({
-      username: "",
-      email: "",
-      phone: "",
-      name: "",
-      password: "",
-      rePassword: ""
-    });
-    setLoginEmail("");
-    setLoginPassword("");
+    setCurrentView('login');
+    resetStates();
   };
 
-  if (showOTP) {
+  // Update view when initialView prop changes
+  React.useEffect(() => {
+    setCurrentView(initialView);
+  }, [initialView]);
+
+  if (currentView === 'otp') {
     return (
-      <Dialog open={open} onOpenChange={onOpenChange}>
+      <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogContent className="sm:max-w-md p-0 overflow-hidden">
           <OTPVerification 
             email={userEmail} 
             onVerified={() => {
-              setShowOTP(false);
+              localStorage.setItem('isLoggedIn', 'true');
+              localStorage.setItem('userEmail', userEmail);
+              setCurrentView('login');
               onOpenChange(false);
             }}
             onBack={handleBackToAuth}
@@ -151,14 +181,14 @@ const AuthModal = ({ open, onOpenChange }: AuthModalProps) => {
     );
   }
 
-  if (showForgotPassword) {
+  if (currentView === 'forgot') {
     return (
-      <Dialog open={open} onOpenChange={onOpenChange}>
+      <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogContent className="sm:max-w-md p-0 overflow-hidden">
           <ForgotPassword 
             onBack={handleBackToAuth}
             onSuccess={() => {
-              setShowForgotPassword(false);
+              setCurrentView('login');
               alert("Password reset link sent to your email!");
             }}
           />
@@ -168,24 +198,22 @@ const AuthModal = ({ open, onOpenChange }: AuthModalProps) => {
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-md p-0 overflow-hidden bg-gradient-to-br from-purple-50 to-blue-50 border-0">
         <div className="relative">
-          {/* Decorative background elements */}
           <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-200 to-pink-200 rounded-full opacity-20 -translate-y-16 translate-x-16"></div>
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-br from-blue-200 to-purple-200 rounded-full opacity-20 translate-y-12 -translate-x-12"></div>
           
           <div className="relative p-8">
             <DialogHeader className="text-center mb-6">
               <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-                {isLogin ? "Welcome Back!" : "Join TechBlog"}
+                {currentView === 'login' ? "Welcome Back!" : "Join TechBlog"}
               </DialogTitle>
               <p className="text-gray-600 mt-2">
-                {isLogin ? "Sign in to your account" : "Create your account"}
+                {currentView === 'login' ? "Sign in to your account" : "Create your account"}
               </p>
             </DialogHeader>
 
-            {/* Google Login Button */}
             <Button
               onClick={handleGoogleLogin}
               variant="outline"
@@ -202,7 +230,7 @@ const AuthModal = ({ open, onOpenChange }: AuthModalProps) => {
               </span>
             </div>
 
-            {isLogin ? (
+            {currentView === 'login' ? (
               <form onSubmit={handleLoginSubmit} className="space-y-4">
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -231,7 +259,7 @@ const AuthModal = ({ open, onOpenChange }: AuthModalProps) => {
                 <div className="text-right">
                   <button
                     type="button"
-                    onClick={handleForgotPassword}
+                    onClick={() => setCurrentView('forgot')}
                     className="text-sm text-purple-600 hover:text-purple-700 transition-colors"
                   >
                     Forgot password?
@@ -244,6 +272,10 @@ const AuthModal = ({ open, onOpenChange }: AuthModalProps) => {
                 >
                   Sign In
                 </Button>
+
+                <div className="text-center text-sm text-gray-500 p-2 bg-blue-50 rounded-lg">
+                  Demo: test@example.com / password
+                </div>
               </form>
             ) : (
               <form onSubmit={handleSignupSubmit} className="space-y-4">
@@ -330,12 +362,15 @@ const AuthModal = ({ open, onOpenChange }: AuthModalProps) => {
 
             <div className="text-center mt-6">
               <p className="text-gray-600">
-                {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
+                {currentView === 'login' ? "Don't have an account?" : "Already have an account?"}{" "}
                 <button
-                  onClick={() => setIsLogin(!isLogin)}
+                  onClick={() => {
+                    setCurrentView(currentView === 'login' ? 'signup' : 'login');
+                    resetStates();
+                  }}
                   className="text-purple-600 hover:text-purple-700 font-semibold transition-colors"
                 >
-                  {isLogin ? "Sign up" : "Sign in"}
+                  {currentView === 'login' ? "Sign up" : "Sign in"}
                 </button>
               </p>
             </div>
