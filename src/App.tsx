@@ -10,6 +10,7 @@ import BlogDetail from "./pages/BlogDetail";
 import NotFound from "./pages/NotFound";
 import ProfilePage from "./components/ProfilePage";
 import NewBlogPage from "./components/NewBlogPage";
+import BlogEditPage from "./components/BlogEditPage";
 import FollowingsPage from "./components/FollowingsPage";
 import HistoryPage from "./components/HistoryPage";
 import SavedBlogsPage from "./components/SavedBlogsPage";
@@ -29,6 +30,7 @@ const App = () => (
             <Route path="/blog/:id" element={<BlogDetail />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/new-blog" element={<NewBlogPage />} />
+            <Route path="/edit-blog/:id" element={<BlogEditPage />} />
             <Route path="/followings" element={<FollowingsPage />} />
             <Route path="/history" element={<HistoryPage />} />
             <Route path="/saved-blogs" element={<SavedBlogsPage />} />

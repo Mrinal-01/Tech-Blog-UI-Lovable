@@ -1,7 +1,8 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Heart, MessageCircle, Clock, User } from "lucide-react";
+import { Heart, MessageCircle, Clock, User, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const MostLikedBlogs = () => {
   const navigate = useNavigate();
@@ -56,27 +57,42 @@ const MostLikedBlogs = () => {
     navigate(`/blog/${blogId}`);
   };
 
+  const handleViewAll = () => {
+    // Navigate to a blogs listing page (you can create this later)
+    console.log("Navigate to all blogs page");
+  };
+
   return (
-    <section className="py-16 bg-gray-50">
+    <section className="py-16 bg-gray-50 dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            Most Liked Blogs
-          </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Discover the most popular articles from our community of developers and tech enthusiasts
-          </p>
+        <div className="flex justify-between items-center mb-12">
+          <div className="text-center flex-1">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+              Most Liked Blogs
+            </h2>
+            <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+              Discover the most popular articles from our community of developers and tech enthusiasts
+            </p>
+          </div>
+          <Button 
+            variant="ghost" 
+            onClick={handleViewAll}
+            className="flex items-center space-x-2 text-purple-600 hover:text-purple-700"
+          >
+            <span>View All</span>
+            <ArrowRight className="w-4 h-4" />
+          </Button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {blogs.map((blog) => (
             <article 
               key={blog.id} 
-              className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden border border-gray-200 cursor-pointer transform hover:scale-105"
+              className="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden border border-gray-200 dark:border-gray-700 cursor-pointer transform hover:scale-105"
               onClick={() => handleBlogClick(blog.id)}
             >
               {/* Thumbnail */}
-              <div className="aspect-video bg-gradient-to-r from-purple-100 to-blue-100 flex items-center justify-center">
+              <div className="aspect-video bg-gradient-to-r from-purple-100 to-blue-100 dark:from-purple-900 dark:to-blue-900 flex items-center justify-center">
                 <img
                   src={blog.thumbnail}
                   alt={blog.title}
@@ -86,17 +102,17 @@ const MostLikedBlogs = () => {
 
               <div className="p-6">
                 {/* Title */}
-                <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2 hover:text-purple-600 transition-colors">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3 line-clamp-2 hover:text-purple-600 transition-colors">
                   {blog.title}
                 </h3>
 
                 {/* Excerpt */}
-                <p className="text-gray-600 mb-4 line-clamp-3">
+                <p className="text-gray-600 dark:text-gray-400 mb-4 line-clamp-3">
                   {blog.excerpt}
                 </p>
 
                 {/* Author and Meta */}
-                <div className="flex items-center text-sm text-gray-500 mb-4">
+                <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-4">
                   <User className="w-4 h-4 mr-1" />
                   <span className="mr-4">{blog.author}</span>
                   <Clock className="w-4 h-4 mr-1" />
@@ -104,7 +120,7 @@ const MostLikedBlogs = () => {
                 </div>
 
                 {/* Engagement */}
-                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-700">
                   <div className="flex items-center space-x-4">
                     <button
                       onClick={(e) => toggleLike(e, blog.id)}
@@ -121,7 +137,7 @@ const MostLikedBlogs = () => {
                       />
                       <span className="text-sm">{blog.likes}</span>
                     </button>
-                    <div className="flex items-center space-x-1 text-gray-500">
+                    <div className="flex items-center space-x-1 text-gray-500 dark:text-gray-400">
                       <MessageCircle className="w-4 h-4" />
                       <span className="text-sm">{blog.comments}</span>
                     </div>

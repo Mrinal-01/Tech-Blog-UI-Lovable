@@ -1,5 +1,5 @@
-
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
-import { Camera, Save, User, BookOpen, Heart, Eye, Users, TrendingUp, Edit } from "lucide-react";
+import { Camera, Save, User, BookOpen, Heart, Eye, Users, TrendingUp, Edit, ArrowLeft, Trash2 } from "lucide-react";
 import UserAvatar from "./UserAvatar";
 
 interface ProfileData {
@@ -32,6 +32,7 @@ interface BlogPost {
 }
 
 const ProfilePage = () => {
+  const navigate = useNavigate();
   const [profileData, setProfileData] = useState<ProfileData>({
     name: "John Doe",
     email: "test@example.com",
@@ -110,11 +111,35 @@ const ProfilePage = () => {
     }
   };
 
+  const handleGoBack = () => {
+    navigate(-1);
+  };
+
+  const handleEditBlog = (blogId: number) => {
+    navigate(`/edit-blog/${blogId}`);
+  };
+
+  const handleDeleteBlog = (blogId: number) => {
+    if (window.confirm("Are you sure you want to delete this blog?")) {
+      console.log(`Deleting blog with ID: ${blogId}`);
+      // Here you would typically make an API call to delete the blog
+      alert("Blog deleted successfully!");
+    }
+  };
+
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-6">
       <div className="flex items-center space-x-3">
+        <Button 
+          variant="ghost" 
+          size="sm"
+          onClick={handleGoBack}
+          className="mr-2"
+        >
+          <ArrowLeft className="w-4 h-4" />
+        </Button>
         <User className="w-8 h-8 text-purple-600" />
-        <h1 className="text-3xl font-bold text-gray-900">Your Profile</h1>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Your Profile</h1>
       </div>
 
       {/* Profile Header with Stats */}
@@ -131,30 +156,30 @@ const ProfilePage = () => {
               />
             </div>
             <div className="flex-1">
-              <h2 className="text-2xl font-bold text-gray-900">{profileData.name}</h2>
-              <p className="text-gray-600">@{profileData.username}</p>
-              <p className="text-gray-700 mt-2">{profileData.bio}</p>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{profileData.name}</h2>
+              <p className="text-gray-600 dark:text-gray-400">@{profileData.username}</p>
+              <p className="text-gray-700 dark:text-gray-300 mt-2">{profileData.bio}</p>
             </div>
             <div className="grid grid-cols-3 md:grid-cols-5 gap-4 text-center">
               <div>
                 <div className="text-2xl font-bold text-purple-600">{stats.totalBlogs}</div>
-                <div className="text-sm text-gray-600">Blogs</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">Blogs</div>
               </div>
               <div>
                 <div className="text-2xl font-bold text-red-600">{stats.totalLikes}</div>
-                <div className="text-sm text-gray-600">Likes</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">Likes</div>
               </div>
               <div>
                 <div className="text-2xl font-bold text-blue-600">{stats.totalViews}</div>
-                <div className="text-sm text-gray-600">Views</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">Views</div>
               </div>
               <div>
                 <div className="text-2xl font-bold text-green-600">{stats.followers}</div>
-                <div className="text-sm text-gray-600">Followers</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">Followers</div>
               </div>
               <div>
                 <div className="text-2xl font-bold text-orange-600">{stats.following}</div>
-                <div className="text-sm text-gray-600">Following</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">Following</div>
               </div>
             </div>
           </div>
@@ -303,7 +328,7 @@ const ProfilePage = () => {
         <TabsContent value="blogs" className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {userBlogs.map((blog) => (
-              <Card key={blog.id} className="hover:shadow-md transition-shadow cursor-pointer">
+              <Card key={blog.id} className="hover:shadow-md transition-shadow">
                 <img 
                   src={blog.thumbnail} 
                   alt={blog.title}
@@ -311,8 +336,8 @@ const ProfilePage = () => {
                 />
                 <CardContent className="p-4">
                   <h3 className="font-semibold text-lg mb-2 line-clamp-2">{blog.title}</h3>
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-3">{blog.excerpt}</p>
-                  <div className="flex items-center justify-between text-sm text-gray-500">
+                  <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-3">{blog.excerpt}</p>
+                  <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400 mb-4">
                     <div className="flex items-center space-x-4">
                       <span className="flex items-center space-x-1">
                         <Heart className="w-4 h-4" />
@@ -324,6 +349,25 @@ const ProfilePage = () => {
                       </span>
                     </div>
                     <span>{new Date(blog.createdAt).toLocaleDateString()}</span>
+                  </div>
+                  <div className="flex space-x-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleEditBlog(blog.id)}
+                      className="flex-1"
+                    >
+                      <Edit className="w-4 h-4 mr-1" />
+                      Edit
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleDeleteBlog(blog.id)}
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
