@@ -3,10 +3,17 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Heart, MessageCircle, Clock, User, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 const MostLikedBlogs = () => {
   const navigate = useNavigate();
   const [likedPosts, setLikedPosts] = useState<number[]>([]);
+  const [blogStats, setBlogStats] = useState({
+    1: { likes: 127, comments: 23 },
+    2: { likes: 89, comments: 15 },
+    3: { likes: 156, comments: 31 }
+  });
+  const { toast } = useToast();
 
   const blogs = [
     {
@@ -16,8 +23,6 @@ const MostLikedBlogs = () => {
       author: "Alex Johnson",
       date: "2024-01-15",
       readTime: "8 min read",
-      likes: 127,
-      comments: 23,
       thumbnail: "/placeholder.svg"
     },
     {
@@ -27,8 +32,6 @@ const MostLikedBlogs = () => {
       author: "Sarah Chen",
       date: "2024-01-12",
       readTime: "12 min read",
-      likes: 89,
-      comments: 15,
       thumbnail: "/placeholder.svg"
     },
     {
@@ -38,19 +41,46 @@ const MostLikedBlogs = () => {
       author: "Mike Rodriguez",
       date: "2024-01-10",
       readTime: "15 min read",
-      likes: 156,
-      comments: 31,
       thumbnail: "/placeholder.svg"
     }
   ];
 
   const toggleLike = (e: React.MouseEvent, blogId: number) => {
-    e.stopPropagation(); // Prevent navigation when clicking like button
-    setLikedPosts(prev => 
-      prev.includes(blogId) 
-        ? prev.filter(id => id !== blogId)
-        : [...prev, blogId]
-    );
+    e.stopPropagation();
+    const wasLiked = likedPosts.includes(blogId);
+    
+    if (wasLiked) {
+      setLikedPosts(prev => prev.filter(id => id !== blogId));
+      setBlogStats(prev => ({
+        ...prev,
+        [blogId]: {
+          ...prev[blogId as keyof typeof prev],
+          likes: prev[blogId as keyof typeof prev].likes - 1
+        }
+      }));
+      toast({
+        title: "Like removed",
+        description: "You unliked this blog post.",
+      });
+    } else {
+      setLikedPosts(prev => [...prev, blogId]);
+      setBlogStats(prev => ({
+        ...prev,
+        [blogId]: {
+          ...prev[blogId as keyof typeof prev],
+          likes: prev[blogId as keyof typeof prev].likes + 1
+        }
+      }));
+      toast({
+        title: "Blog liked!",
+        description: "Thanks for liking this post!",
+      });
+    }
+  };
+
+  const handleCommentClick = (e: React.MouseEvent, blogId: number) => {
+    e.stopPropagation();
+    navigate(`/blog/${blogId}#comments`);
   };
 
   const handleBlogClick = (blogId: number) => {
@@ -58,8 +88,11 @@ const MostLikedBlogs = () => {
   };
 
   const handleViewAll = () => {
-    // Navigate to a blogs listing page (you can create this later)
-    console.log("Navigate to all blogs page");
+    // Navigate to a blogs listing page
+    toast({
+      title: "View All Blogs",
+      description: "Redirecting to all blogs page...",
+    });
   };
 
   return (
@@ -77,7 +110,7 @@ const MostLikedBlogs = () => {
           <Button 
             variant="ghost" 
             onClick={handleViewAll}
-            className="flex items-center space-x-2 text-purple-600 hover:text-purple-700"
+            className="flex items-center space-x-2 text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300"
           >
             <span>View All</span>
             <ArrowRight className="w-4 h-4" />
@@ -102,7 +135,7 @@ const MostLikedBlogs = () => {
 
               <div className="p-6">
                 {/* Title */}
-                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3 line-clamp-2 hover:text-purple-600 transition-colors">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3 line-clamp-2 hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
                   {blog.title}
                 </h3>
 
@@ -124,10 +157,10 @@ const MostLikedBlogs = () => {
                   <div className="flex items-center space-x-4">
                     <button
                       onClick={(e) => toggleLike(e, blog.id)}
-                      className={`flex items-center space-x-1 transition-colors ${
+                      className={`flex items-center space-x-1 transition-colors hover:scale-110 transform ${
                         likedPosts.includes(blog.id)
                           ? 'text-red-500'
-                          : 'text-gray-500 hover:text-red-500'
+                          : 'text-gray-500 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400'
                       }`}
                     >
                       <Heart 
@@ -135,12 +168,15 @@ const MostLikedBlogs = () => {
                           likedPosts.includes(blog.id) ? 'fill-current' : ''
                         }`} 
                       />
-                      <span className="text-sm">{blog.likes}</span>
+                      <span className="text-sm">{blogStats[blog.id as keyof typeof blogStats].likes}</span>
                     </button>
-                    <div className="flex items-center space-x-1 text-gray-500 dark:text-gray-400">
+                    <button
+                      onClick={(e) => handleCommentClick(e, blog.id)}
+                      className="flex items-center space-x-1 text-gray-500 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400 transition-colors hover:scale-110 transform"
+                    >
                       <MessageCircle className="w-4 h-4" />
-                      <span className="text-sm">{blog.comments}</span>
-                    </div>
+                      <span className="text-sm">{blogStats[blog.id as keyof typeof blogStats].comments}</span>
+                    </button>
                   </div>
                   <span className="text-xs text-gray-400">
                     {new Date(blog.date).toLocaleDateString()}
