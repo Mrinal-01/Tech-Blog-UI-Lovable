@@ -5,6 +5,7 @@ import { Search } from "lucide-react";
 import AuthModal from "./AuthModal";
 import NotificationDropdown from "./NotificationDropdown";
 import UserProfileDropdown from "./UserProfileDropdown";
+import { ThemeToggle } from "./ThemeToggle";
 
 const Header = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -48,7 +49,7 @@ const Header = () => {
 
   return (
     <>
-      <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+      <header className="bg-background shadow-sm border-b border-border sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
@@ -60,23 +61,26 @@ const Header = () => {
 
             {/* Navigation */}
             <nav className="hidden md:flex space-x-8">
-              <a href="#" className="text-gray-700 hover:text-purple-600 transition-colors">Home</a>
-              <a href="#" className="text-gray-700 hover:text-purple-600 transition-colors">Blogs</a>
-              <a href="#" className="text-gray-700 hover:text-purple-600 transition-colors">Categories</a>
-              <a href="#" className="text-gray-700 hover:text-purple-600 transition-colors">About</a>
+              <a href="#" className="text-foreground hover:text-purple-600 transition-colors">Home</a>
+              <a href="#" className="text-foreground hover:text-purple-600 transition-colors">Blogs</a>
+              <a href="#" className="text-foreground hover:text-purple-600 transition-colors">Categories</a>
+              <a href="#" className="text-foreground hover:text-purple-600 transition-colors">About</a>
             </nav>
 
             {/* Search and Auth */}
             <div className="flex items-center space-x-4">
               {/* Search */}
-              <div className="hidden sm:flex items-center bg-gray-100 rounded-lg px-3 py-2">
-                <Search className="w-4 h-4 text-gray-500 mr-2" />
+              <div className="hidden sm:flex items-center bg-muted rounded-lg px-3 py-2">
+                <Search className="w-4 h-4 text-muted-foreground mr-2" />
                 <input
                   type="text"
                   placeholder="Search articles..."
-                  className="bg-transparent outline-none text-sm w-40"
+                  className="bg-transparent outline-none text-sm w-40 text-foreground"
                 />
               </div>
+
+              {/* Theme Toggle */}
+              <ThemeToggle />
 
               {isLoggedIn ? (
                 <div className="flex items-center space-x-3">
@@ -86,8 +90,8 @@ const Header = () => {
                   {/* User Profile Dropdown */}
                   <div className="flex items-center space-x-2">
                     <div className="hidden sm:flex flex-col items-end">
-                      <span className="text-sm font-medium text-gray-700">Welcome back!</span>
-                      <span className="text-xs text-gray-500">{userName}</span>
+                      <span className="text-sm font-medium text-foreground">Welcome back!</span>
+                      <span className="text-xs text-muted-foreground">{userName}</span>
                     </div>
                     <UserProfileDropdown 
                       userName={userName}
@@ -101,7 +105,7 @@ const Header = () => {
                   <Button 
                     variant="ghost" 
                     onClick={handleLogin}
-                    className="text-gray-700 hover:text-purple-600"
+                    className="text-foreground hover:text-purple-600"
                   >
                     Login
                   </Button>

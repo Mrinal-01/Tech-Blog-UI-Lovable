@@ -1,14 +1,15 @@
-
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Camera, Save, Eye, Edit, Upload } from "lucide-react";
+import { Camera, Save, Eye, Edit, Upload, ArrowLeft } from "lucide-react";
 
 const NewBlogPage = () => {
+  const navigate = useNavigate();
   const [blogData, setBlogData] = useState({
     title: "",
     description: "",
@@ -71,6 +72,15 @@ const NewBlogPage = () => {
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-6">
       <div className="flex items-center space-x-3">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => navigate(-1)}
+          className="flex items-center space-x-2"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          <span>Back</span>
+        </Button>
         <Edit className="w-8 h-8 text-purple-600" />
         <h1 className="text-3xl font-bold text-gray-900">Create New Blog</h1>
       </div>
