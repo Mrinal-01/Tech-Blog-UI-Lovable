@@ -10,12 +10,8 @@ interface UserAvatarProps {
 }
 
 const UserAvatar = ({ name, email, imageUrl, size = "md", className }: UserAvatarProps) => {
-  const getInitials = (name: string) => {
-    const names = name.split(' ');
-    if (names.length >= 2) {
-      return `${names[0][0]}${names[1][0]}`.toUpperCase();
-    }
-    return name.slice(0, 2).toUpperCase();
+  const getFirstLetter = (name: string) => {
+    return name.charAt(0).toUpperCase();
   };
 
   const getRandomColor = (email: string) => {
@@ -47,14 +43,14 @@ const UserAvatar = ({ name, email, imageUrl, size = "md", className }: UserAvata
     lg: "h-12 w-12 text-base"
   };
 
-  const initials = getInitials(name);
+  const firstLetter = getFirstLetter(name);
   const bgColor = getRandomColor(email);
 
   return (
-    <Avatar className={`${sizeClasses[size]} ${className}`}>
-      {imageUrl && <AvatarImage src={imageUrl} alt={name} />}
-      <AvatarFallback className={`${bgColor} text-white font-semibold`}>
-        {initials}
+    <Avatar className={`${sizeClasses[size]} ${className} rounded-lg`}>
+      {imageUrl && <AvatarImage src={imageUrl} alt={name} className="rounded-lg" />}
+      <AvatarFallback className={`${bgColor} text-white font-semibold rounded-lg`}>
+        {firstLetter}
       </AvatarFallback>
     </Avatar>
   );
