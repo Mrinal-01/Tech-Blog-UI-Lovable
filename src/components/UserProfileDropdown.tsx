@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
@@ -15,40 +16,34 @@ interface UserProfileDropdownProps {
 
 const UserProfileDropdown = ({ userName, userEmail, userImage, onLogout }: UserProfileDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleMenuClick = (action: string) => {
     console.log(`Clicked: ${action}`);
     setIsOpen(false);
     
-    // Demo API calls - replace with actual endpoints
     switch (action) {
       case 'profile':
-        console.log('Opening profile page');
-        // Navigate to profile page or open modal
+        navigate('/profile');
         break;
       case 'new-blog':
-        console.log('Opening new blog editor');
-        // Navigate to blog creation page
+        navigate('/new-blog');
         break;
       case 'followings':
-        console.log('Opening followings page');
-        // Navigate to followings page
+        navigate('/followings');
         break;
       case 'history':
-        console.log('Opening reading history');
-        // Navigate to history page
+        navigate('/history');
         break;
       case 'saved':
-        console.log('Opening saved blogs');
-        // Navigate to saved blogs page
+        navigate('/saved-blogs');
         break;
       case 'bookmarks':
-        console.log('Opening bookmarks');
-        // Navigate to bookmarks page
+        navigate('/bookmarks');
         break;
       case 'settings':
         console.log('Opening settings');
-        // Navigate to settings page
+        // Navigate to settings page when created
         break;
       case 'logout':
         onLogout();
