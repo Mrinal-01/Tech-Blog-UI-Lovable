@@ -1,6 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const blogThumbnails = [
   {
@@ -29,8 +30,14 @@ const blogThumbnails = [
   }
 ];
 
-const Hero = () => {
+interface HeroProps {
+  onSignUp?: () => void;
+}
+
+const Hero = ({ onSignUp }: HeroProps) => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -39,6 +46,21 @@ const Hero = () => {
 
     return () => clearInterval(timer);
   }, []);
+
+  useEffect(() => {
+    const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    setIsLoggedIn(loggedIn);
+  }, []);
+
+  const handleGetStarted = () => {
+    if (onSignUp) {
+      onSignUp();
+    }
+  };
+
+  const handleExplore = () => {
+    navigate('/all-blogs');
+  };
 
   return (
     <section className="relative overflow-hidden bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white">
@@ -53,12 +75,26 @@ const Hero = () => {
               Join our community of tech enthusiasts and level up your skills.
             </p>
             <div className="flex space-x-4">
-              <Button className="bg-white text-purple-600 hover:bg-gray-100 px-8 py-3">
-                Get Started
-              </Button>
-              <Button variant="outline" className="border-white text-white hover:bg-white hover:text-purple-600 px-8 py-3">
-                View Pricing
-              </Button>
+              {isLoggedIn ? (
+                <Button 
+                  onClick={handleExplore}
+                  className="bg-white text-purple-600 hover:bg-gray-100 px-8 py-3"
+                >
+                  Explore
+                </Button>
+              ) : (
+                <>
+                  <Button 
+                    onClick={handleGetStarted}
+                    className="bg-white text-purple-600 hover:bg-gray-100 px-8 py-3"
+                  >
+                    Get Started
+                  </Button>
+                  <Button variant="outline" className="border-white text-white hover:bg-white hover:text-purple-600 px-8 py-3">
+                    View Pricing
+                  </Button>
+                </>
+              )}
             </div>
           </div>
           
