@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Heart, MessageCircle, Clock, User, ArrowRight } from "lucide-react";
@@ -88,11 +87,7 @@ const MostLikedBlogs = () => {
   };
 
   const handleViewAll = () => {
-    // Navigate to a blogs listing page
-    toast({
-      title: "View All Blogs",
-      description: "Redirecting to all blogs page...",
-    });
+    navigate('/all-blogs');
   };
 
   return (

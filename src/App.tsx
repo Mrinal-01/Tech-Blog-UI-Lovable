@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import Index from "./pages/Index";
 import BlogDetail from "./pages/BlogDetail";
+import AllBlogsPage from "./pages/AllBlogsPage";
 import NotFound from "./pages/NotFound";
 import ProfilePage from "./components/ProfilePage";
 import NewBlogPage from "./components/NewBlogPage";
@@ -28,6 +29,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/blog/:id" element={<BlogDetail />} />
+            <Route path="/all-blogs" element={<AllBlogsPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/new-blog" element={<NewBlogPage />} />
             <Route path="/edit-blog/:id" element={<BlogEditPage />} />

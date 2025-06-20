@@ -2,8 +2,9 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Bell, Check } from "lucide-react";
+import { Bell, Check, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
 
 interface Notification {
   id: string;
@@ -42,14 +43,12 @@ const NotificationDropdown = () => {
     }
   ]);
 
+  const { toast } = useToast();
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
   const markAsRead = async (id: string) => {
-    // Demo API call - replace with actual endpoint
     try {
       console.log(`Marking notification ${id} as read`);
-      // await fetch(`/api/notifications/${id}/read`, { method: 'POST' });
-      
       setNotifications(prev => 
         prev.map(n => n.id === id ? { ...n, isRead: true } : n)
       );
@@ -59,16 +58,30 @@ const NotificationDropdown = () => {
   };
 
   const markAllAsRead = async () => {
-    // Demo API call - replace with actual endpoint
     try {
       console.log('Marking all notifications as read');
-      // await fetch('/api/notifications/read-all', { method: 'POST' });
-      
       setNotifications(prev => 
         prev.map(n => ({ ...n, isRead: true }))
       );
+      toast({
+        title: "All notifications marked as read",
+        description: "Your notifications have been updated.",
+      });
     } catch (error) {
       console.error('Error marking all notifications as read:', error);
+    }
+  };
+
+  const clearAllNotifications = async () => {
+    try {
+      console.log('Clearing all notifications');
+      setNotifications([]);
+      toast({
+        title: "All notifications cleared",
+        description: "Your notification list has been cleared.",
+      });
+    } catch (error) {
+      console.error('Error clearing all notifications:', error);
     }
   };
 
@@ -87,16 +100,29 @@ const NotificationDropdown = () => {
       <PopoverContent className="w-80 p-0" align="end">
         <div className="flex items-center justify-between p-4 border-b">
           <h3 className="font-semibold">Notifications</h3>
-          {unreadCount > 0 && (
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={markAllAsRead}
-              className="text-xs text-purple-600 hover:text-purple-700"
-            >
-              Mark all as read
-            </Button>
-          )}
+          <div className="flex items-center space-x-2">
+            {unreadCount > 0 && (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={markAllAsRead}
+                className="text-xs text-purple-600 hover:text-purple-700"
+              >
+                Mark all as read
+              </Button>
+            )}
+            {notifications.length > 0 && (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={clearAllNotifications}
+                className="text-xs text-red-600 hover:text-red-700"
+              >
+                <Trash2 className="w-3 h-3 mr-1" />
+                Clear All
+              </Button>
+            )}
+          </div>
         </div>
         <div className="max-h-96 overflow-y-auto">
           {notifications.length === 0 ? (
