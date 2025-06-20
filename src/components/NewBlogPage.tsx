@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -6,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Camera, Save, Eye, Edit, Upload, ArrowLeft } from "lucide-react";
+import { Camera, Save, Eye, Edit, Upload, ArrowLeft, HelpCircle } from "lucide-react";
 
 const NewBlogPage = () => {
   const navigate = useNavigate();
@@ -67,6 +68,10 @@ const NewBlogPage = () => {
       .replace(/```(\w+)?\n([\s\S]*?)```/gim, '<pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto my-4"><code class="language-$1">$2</code></pre>')
       .replace(/`([^`]+)`/gim, '<code class="bg-gray-100 px-2 py-1 rounded text-sm">$1</code>')
       .replace(/\n/gim, '<br>');
+  };
+
+  const handleMarkdownGuide = () => {
+    window.open('https://www.markdownguide.org/cheat-sheet/', '_blank');
   };
 
   return (
@@ -169,7 +174,19 @@ const NewBlogPage = () => {
         <div className="lg:col-span-2">
           <Card className="h-full">
             <CardHeader>
-              <CardTitle>Content</CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle>Content</CardTitle>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleMarkdownGuide}
+                  className="flex items-center space-x-2 text-blue-600 hover:text-blue-700"
+                  title="Markdown Guide"
+                >
+                  <HelpCircle className="w-4 h-4" />
+                  <span className="text-sm">Markdown Guide</span>
+                </Button>
+              </div>
             </CardHeader>
             <CardContent className="h-full">
               <Tabs defaultValue="write" className="h-full">
