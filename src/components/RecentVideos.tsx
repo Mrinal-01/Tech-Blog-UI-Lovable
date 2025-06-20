@@ -1,6 +1,7 @@
 
 import { Video, ChevronRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { useNavigate } from "react-router-dom";
 
 const videos = [
   {
@@ -30,12 +31,21 @@ const videos = [
 ];
 
 const RecentVideos = () => {
+  const navigate = useNavigate();
+
+  const handleViewAll = () => {
+    navigate('/all-blogs');
+  };
+
   return (
     <section className="py-16 px-6 bg-gray-50">
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-between mb-12">
           <h2 className="text-3xl font-bold text-gray-900">Recent Videos</h2>
-          <button className="flex items-center text-blue-600 hover:text-blue-700 font-medium">
+          <button 
+            onClick={handleViewAll}
+            className="flex items-center text-blue-600 hover:text-blue-700 font-medium transition-colors"
+          >
             View All
             <ChevronRight className="w-4 h-4 ml-1" />
           </button>
