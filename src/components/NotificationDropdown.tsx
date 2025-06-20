@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -100,13 +99,13 @@ const NotificationDropdown = () => {
       <PopoverContent className="w-80 p-0" align="end">
         <div className="flex items-center justify-between p-4 border-b">
           <h3 className="font-semibold">Notifications</h3>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1">
             {unreadCount > 0 && (
               <Button 
                 variant="ghost" 
                 size="sm" 
                 onClick={markAllAsRead}
-                className="text-xs text-purple-600 hover:text-purple-700"
+                className="text-xs text-purple-600 hover:text-purple-700 px-2 py-1 h-auto"
               >
                 Mark all as read
               </Button>
@@ -116,7 +115,7 @@ const NotificationDropdown = () => {
                 variant="ghost" 
                 size="sm" 
                 onClick={clearAllNotifications}
-                className="text-xs text-red-600 hover:text-red-700"
+                className="text-xs text-red-600 hover:text-red-700 px-2 py-1 h-auto"
               >
                 <Trash2 className="w-3 h-3 mr-1" />
                 Clear All

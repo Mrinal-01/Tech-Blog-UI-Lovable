@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -89,31 +88,18 @@ const HistoryPage = () => {
       <Header />
       
       <div className="max-w-4xl mx-auto p-6 space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <Button 
-              variant="ghost" 
-              onClick={() => navigate('/')}
-              className="p-2"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </Button>
-            <div className="flex items-center space-x-3">
-              <History className="w-8 h-8 text-orange-600" />
-              <h1 className="text-3xl font-bold text-gray-900">Reading History</h1>
-            </div>
+        <div className="flex items-center space-x-4">
+          <Button 
+            variant="ghost" 
+            onClick={() => navigate('/')}
+            className="p-2"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </Button>
+          <div className="flex items-center space-x-3">
+            <History className="w-8 h-8 text-orange-600" />
+            <h1 className="text-3xl font-bold text-gray-900">Reading History</h1>
           </div>
-          
-          {history.length > 0 && (
-            <Button 
-              variant="outline" 
-              onClick={handleClearAllHistory}
-              className="text-red-600 border-red-300 hover:bg-red-50"
-            >
-              <Trash2 className="w-4 h-4 mr-2" />
-              Clear All
-            </Button>
-          )}
         </div>
 
         {/* Search Bar */}
@@ -184,6 +170,20 @@ const HistoryPage = () => {
             </Card>
           ))}
         </div>
+
+        {/* Clear All Button - Moved to bottom */}
+        {history.length > 0 && (
+          <div className="flex justify-center pt-6">
+            <Button 
+              variant="outline" 
+              onClick={handleClearAllHistory}
+              className="text-red-600 border-red-300 hover:bg-red-50"
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              Clear All
+            </Button>
+          </div>
+        )}
 
         {filteredHistory.length === 0 && history.length > 0 && (
           <div className="text-center py-12">

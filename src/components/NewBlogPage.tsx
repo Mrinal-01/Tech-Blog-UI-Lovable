@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Camera, Save, Eye, Edit, Upload, ArrowLeft, HelpCircle } from "lucide-react";
+import Header from "./Header";
 
 const NewBlogPage = () => {
   const navigate = useNavigate();
@@ -75,138 +75,141 @@ const NewBlogPage = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6 space-y-6">
-      <div className="flex items-center space-x-3">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => navigate(-1)}
-          className="flex items-center space-x-2"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>Back</span>
-        </Button>
-        <Edit className="w-8 h-8 text-purple-600" />
-        <h1 className="text-3xl font-bold text-gray-900">Create New Blog</h1>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Blog Details */}
-        <div className="lg:col-span-1">
-          <Card>
-            <CardHeader>
-              <CardTitle>Blog Details</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {/* Thumbnail Upload */}
-              <div className="space-y-2">
-                <Label>Thumbnail</Label>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
-                  {blogData.thumbnail ? (
-                    <div className="relative">
-                      <img
-                        src={blogData.thumbnail}
-                        alt="Thumbnail"
-                        className="w-full h-32 object-cover rounded-lg"
-                      />
-                      <label
-                        htmlFor="thumbnail-upload"
-                        className="absolute top-2 right-2 bg-white p-2 rounded-full shadow-lg cursor-pointer hover:bg-gray-50"
-                      >
-                        <Camera className="w-4 h-4" />
-                      </label>
-                    </div>
-                  ) : (
-                    <label
-                      htmlFor="thumbnail-upload"
-                      className="cursor-pointer flex flex-col items-center space-y-2"
-                    >
-                      <Upload className="w-8 h-8 text-gray-400" />
-                      <span className="text-sm text-gray-600">Click to upload thumbnail</span>
-                    </label>
-                  )}
-                  <input
-                    id="thumbnail-upload"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleThumbnailUpload}
-                    className="hidden"
-                  />
-                </div>
-              </div>
-
-              {/* Title */}
-              <div className="space-y-2">
-                <Label htmlFor="title">Title</Label>
-                <Input
-                  id="title"
-                  value={blogData.title}
-                  onChange={(e) => handleInputChange('title', e.target.value)}
-                  placeholder="Enter blog title"
-                />
-              </div>
-
-              {/* Tags */}
-              <div className="space-y-2">
-                <Label htmlFor="tags">Tags</Label>
-                <Input
-                  id="tags"
-                  value={blogData.tags}
-                  onChange={(e) => handleInputChange('tags', e.target.value)}
-                  placeholder="Enter tags separated by commas"
-                />
-              </div>
-
-              {/* Save Button */}
-              <Button 
-                onClick={handleSaveBlog}
-                disabled={isLoading || !blogData.title || !blogData.description}
-                className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
-              >
-                <Save className="w-4 h-4 mr-2" />
-                {isLoading ? 'Saving...' : 'Save Blog'}
-              </Button>
-            </CardContent>
-          </Card>
+    <div className="min-h-screen bg-gray-50">
+      <Header />
+      
+      <div className="max-w-6xl mx-auto p-6 space-y-6">
+        <div className="flex items-center space-x-3">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate('/')}
+            className="flex items-center space-x-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>Back</span>
+          </Button>
+          <Edit className="w-8 h-8 text-purple-600" />
+          <h1 className="text-3xl font-bold text-gray-900">Create New Blog</h1>
         </div>
 
-        {/* Content Editor */}
-        <div className="lg:col-span-2">
-          <Card className="h-full">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle>Content</CardTitle>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleMarkdownGuide}
-                  className="flex items-center space-x-2 text-blue-600 hover:text-blue-700"
-                  title="Markdown Guide"
-                >
-                  <HelpCircle className="w-4 h-4" />
-                  <span className="text-sm">Markdown Guide</span>
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent className="h-full">
-              <Tabs defaultValue="write" className="h-full">
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="write" className="flex items-center space-x-2">
-                    <Edit className="w-4 h-4" />
-                    <span>Write</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="preview" className="flex items-center space-x-2">
-                    <Eye className="w-4 h-4" />
-                    <span>Preview</span>
-                  </TabsTrigger>
-                </TabsList>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Blog Details */}
+          <div className="lg:col-span-1">
+            <Card>
+              <CardHeader>
+                <CardTitle>Blog Details</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Thumbnail Upload */}
+                <div className="space-y-2">
+                  <Label>Thumbnail</Label>
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+                    {blogData.thumbnail ? (
+                      <div className="relative">
+                        <img
+                          src={blogData.thumbnail}
+                          alt="Thumbnail"
+                          className="w-full h-32 object-cover rounded-lg"
+                        />
+                        <label
+                          htmlFor="thumbnail-upload"
+                          className="absolute top-2 right-2 bg-white p-2 rounded-full shadow-lg cursor-pointer hover:bg-gray-50"
+                        >
+                          <Camera className="w-4 h-4" />
+                        </label>
+                      </div>
+                    ) : (
+                      <label
+                        htmlFor="thumbnail-upload"
+                        className="cursor-pointer flex flex-col items-center space-y-2"
+                      >
+                        <Upload className="w-8 h-8 text-gray-400" />
+                        <span className="text-sm text-gray-600">Click to upload thumbnail</span>
+                      </label>
+                    )}
+                    <input
+                      id="thumbnail-upload"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleThumbnailUpload}
+                      className="hidden"
+                    />
+                  </div>
+                </div>
 
-                <TabsContent value="write" className="mt-4 h-full">
-                  <div className="h-full">
-                    <Textarea
-                      value={blogData.description}
-                      onChange={(e) => handleInputChange('description', e.target.value)}
-                      placeholder="Write your blog content in Markdown...
+                {/* Title */}
+                <div className="space-y-2">
+                  <Label htmlFor="title">Title</Label>
+                  <Input
+                    id="title"
+                    value={blogData.title}
+                    onChange={(e) => handleInputChange('title', e.target.value)}
+                    placeholder="Enter blog title"
+                  />
+                </div>
+
+                {/* Tags */}
+                <div className="space-y-2">
+                  <Label htmlFor="tags">Tags</Label>
+                  <Input
+                    id="tags"
+                    value={blogData.tags}
+                    onChange={(e) => handleInputChange('tags', e.target.value)}
+                    placeholder="Enter tags separated by commas"
+                  />
+                </div>
+
+                {/* Save Button */}
+                <Button 
+                  onClick={handleSaveBlog}
+                  disabled={isLoading || !blogData.title || !blogData.description}
+                  className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+                >
+                  <Save className="w-4 h-4 mr-2" />
+                  {isLoading ? 'Saving...' : 'Save Blog'}
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Content Editor */}
+          <div className="lg:col-span-2">
+            <Card className="h-full">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle>Content</CardTitle>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleMarkdownGuide}
+                    className="flex items-center space-x-2 text-blue-600 hover:text-blue-700"
+                    title="Markdown Guide"
+                  >
+                    <HelpCircle className="w-4 h-4" />
+                    <span className="text-sm">Markdown Guide</span>
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent className="h-full">
+                <Tabs defaultValue="write" className="h-full">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="write" className="flex items-center space-x-2">
+                      <Edit className="w-4 h-4" />
+                      <span>Write</span>
+                    </TabsTrigger>
+                    <TabsTrigger value="preview" className="flex items-center space-x-2">
+                      <Eye className="w-4 h-4" />
+                      <span>Preview</span>
+                    </TabsTrigger>
+                  </TabsList>
+
+                  <TabsContent value="write" className="mt-4 h-full">
+                    <div className="h-full">
+                      <Textarea
+                        value={blogData.description}
+                        onChange={(e) => handleInputChange('description', e.target.value)}
+                        placeholder="Write your blog content in Markdown...
 
 # Your Title Here
 ## Subheading
@@ -225,33 +228,34 @@ function hello() {
 
 - List item 1
 - List item 2"
-                      className="h-96 font-mono text-sm resize-none"
-                    />
-                    <div className="mt-2 text-xs text-gray-500">
-                      Supports Markdown formatting including code blocks with syntax highlighting
-                    </div>
-                  </div>
-                </TabsContent>
-
-                <TabsContent value="preview" className="mt-4">
-                  <div className="h-96 overflow-y-auto border rounded-lg p-4 bg-white">
-                    {blogData.description ? (
-                      <div 
-                        className="prose max-w-none"
-                        dangerouslySetInnerHTML={{ 
-                          __html: renderMarkdownPreview(blogData.description) 
-                        }}
+                        className="h-96 font-mono text-sm resize-none"
                       />
-                    ) : (
-                      <div className="text-gray-500 italic">
-                        Write some content to see the preview...
+                      <div className="mt-2 text-xs text-gray-500">
+                        Supports Markdown formatting including code blocks with syntax highlighting
                       </div>
-                    )}
-                  </div>
-                </TabsContent>
-              </Tabs>
-            </CardContent>
-          </Card>
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="preview" className="mt-4">
+                    <div className="h-96 overflow-y-auto border rounded-lg p-4 bg-white">
+                      {blogData.description ? (
+                        <div 
+                          className="prose max-w-none"
+                          dangerouslySetInnerHTML={{ 
+                            __html: renderMarkdownPreview(blogData.description) 
+                          }}
+                        />
+                      ) : (
+                        <div className="text-gray-500 italic">
+                          Write some content to see the preview...
+                        </div>
+                      )}
+                    </div>
+                  </TabsContent>
+                </Tabs>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </div>
